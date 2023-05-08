@@ -1,0 +1,30 @@
+.workspace{
+  width: 100%;
+  height: 100%;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  padding-top: 20px;
+
+  &__input{
+    width: 100%;
+    height: 100%;
+    border: none;
+    resize: none;
+    background-color: #fafaf8;
+    padding: 30px;
+    font-size: 16px;
+
+    &:focus, &:active{
+      outline: none;
+
+    }
+  }
+
+  &__date{
+    font-size: 20px;
+    font-weight: 600;
+    font-style: italic;
+    color: #a6aaa9;
+  }
+}

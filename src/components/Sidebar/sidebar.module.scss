@@ -1,0 +1,10 @@
+.sidebar{
+  height: 100%;
+  overflow-y: auto;
+  overflow-x: hidden;
+  border-right: 3px solid grey;
+}
+
+.active{
+  background-color: #fbdf8c;
+}

@@ -1,0 +1,6 @@
+.main-block{
+  display: grid;
+  grid-template-columns: 0.3fr 1fr;
+  height: calc(100vh - 70px);
+  background-color: #fafaf8;
+}
