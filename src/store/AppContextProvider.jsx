@@ -4,6 +4,7 @@ import { useEffect, useState } from 'react';
 const AppContextProvider = (props) => {
 	const [mobileScreen, setMobileScreen] = useState(false);
 	const [burgerOpened, setBurgerOpened] = useState(true);
+	const [data, setData] = useState([]);
 
 	useEffect(() => {
 		function handleResize() {
@@ -22,6 +23,8 @@ const AppContextProvider = (props) => {
 	const appContext = {
 		mobileScreen,
 		burgerOpened,
+		data,
+		setData,
 		setBurgerOpened,
 	};
 	return (

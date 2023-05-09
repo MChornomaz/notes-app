@@ -1,4 +1,3 @@
-import { NOTES } from '../../constants';
 import ListItem from '../ListItem/ListItem';
 import styles from './sidebar.module.scss';
 import { useLocation } from 'react-router-dom';
@@ -7,8 +6,8 @@ import AppContext from '../../store/app-context';
 
 const Sidebar = () => {
 	const location = useLocation();
-	const noteId = parseInt(location.pathname.slice(1));
-	const { mobileScreen, burgerOpened } = useContext(AppContext);
+	const noteId = location.pathname.slice(1);
+	const { mobileScreen, burgerOpened, data } = useContext(AppContext);
 
 	return (
 		<aside
@@ -17,15 +16,16 @@ const Sidebar = () => {
 			}`}
 		>
 			<ul>
-				{NOTES.map((note) => (
-					<ListItem
-						key={note.id}
-						note={note.note}
-						created={note.created}
-						id={note.id}
-						classname={noteId === note.id && styles.active}
-					/>
-				))}
+				{data &&
+					data.map((note) => (
+						<ListItem
+							key={note.id}
+							note={note.note}
+							created={note.created}
+							id={note.id}
+							classname={noteId === note.id && styles.active}
+						/>
+					))}
 			</ul>
 		</aside>
 	);
