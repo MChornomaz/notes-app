@@ -3,6 +3,22 @@
   overflow-y: auto;
   overflow-x: hidden;
   border-right: 3px solid grey;
+  min-width: 300px;
+  transition: width .7s ease-in;
+
+  @media  (max-width: 600px){
+    min-width: 0;
+    width: 100%;
+    transition: width .7s;
+    border: none;
+  }
+
+  &.hidden{
+    min-width: 0;
+    width: 0px;
+    border: none;
+    transition: width .7s;
+  }
 }
 
 .active{

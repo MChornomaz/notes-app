@@ -2,13 +2,20 @@ import { NOTES } from '../../constants';
 import ListItem from '../ListItem/ListItem';
 import styles from './sidebar.module.scss';
 import { useLocation } from 'react-router-dom';
+import { useContext } from 'react';
+import AppContext from '../../store/app-context';
 
 const Sidebar = () => {
 	const location = useLocation();
 	const noteId = parseInt(location.pathname.slice(1));
+	const { mobileScreen, burgerOpened } = useContext(AppContext);
 
 	return (
-		<aside className={styles.sidebar}>
+		<aside
+			className={`${styles.sidebar} ${
+				mobileScreen && !burgerOpened && styles.hidden
+			}`}
+		>
 			<ul>
 				{NOTES.map((note) => (
 					<ListItem

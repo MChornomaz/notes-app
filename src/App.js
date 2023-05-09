@@ -1,4 +1,4 @@
-import './App.css';
+import './App.scss';
 import Sidebar from './components/Sidebar/Sidebar';
 import Header from './components/Header/Header';
 import WorkSpace from './components/WorkSpace/WorkSpace';

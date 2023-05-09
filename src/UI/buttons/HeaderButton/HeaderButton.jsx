@@ -5,7 +5,7 @@ const HeaderButton = (props) => {
 		<button
 			type={'button'}
 			onClick={props.onClick}
-			className={styles.button}
+			className={`${styles.button} ${props.classname}`}
 			disabled={props.disabled}
 		>
 			{props.children}

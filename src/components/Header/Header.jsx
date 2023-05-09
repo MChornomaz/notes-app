@@ -5,17 +5,22 @@ import CheckIcon from '../../static/icons/CheckIcon';
 import SearchBox from '../SearchBox/SearchBox';
 import styles from './header.module.scss';
 import { useLocation, useNavigate } from 'react-router-dom';
-import { useCallback, useEffect, useState } from 'react';
+import { useCallback, useContext, useEffect, useState } from 'react';
+import AppContext from '../../store/app-context';
 
 const Header = () => {
 	const location = useLocation();
 	const noteId = parseInt(location.pathname.slice(1));
 	const [blockButtons, setBlockButtons] = useState(true);
+
 	const navigate = useNavigate();
+
+	const { mobileScreen, burgerOpened, setBurgerOpened } =
+		useContext(AppContext);
 
 	const addNoteHandler = useCallback(() => {
 		navigate('/add-note');
-	}, []);
+	}, [navigate]);
 
 	useEffect(() => {
 		if (noteId) {
@@ -25,9 +30,21 @@ const Header = () => {
 		}
 	}, [noteId]);
 
+	const burgerButtonClickHandler = useCallback(() => {
+		setBurgerOpened(!burgerOpened);
+	}, [burgerOpened]);
+
 	return (
 		<header className={styles.header}>
 			<div className={styles.header__buttons}>
+				{mobileScreen && (
+					<HeaderButton
+						classname={`${styles.burger} ${burgerOpened && styles.opened}`}
+						onClick={burgerButtonClickHandler}
+					>
+						<span />
+					</HeaderButton>
+				)}
 				<HeaderButton onClick={addNoteHandler}>
 					<AddIcon />
 				</HeaderButton>

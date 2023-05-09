@@ -1,0 +1,13 @@
+.main-block{
+  display: flex;
+  height: calc(100vh - 70px);
+  background-color: #fafaf8;
+
+
+  @media (max-width: 550px) {
+    height: calc(100vh - 113px);
+
+  }
+
+}
+

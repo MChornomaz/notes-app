@@ -1,6 +1,15 @@
 .workspace{
   height: 100%;
   width: 100%;
+  transition: width .3s;
 
+  //@media (max-width: 550px){
+  //  width: fit-content;
+  //}
+
+  &.hidden{
+    width: 0;
+    opacity: 0;
+  }
 
 }

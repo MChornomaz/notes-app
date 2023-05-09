@@ -1,10 +1,11 @@
 import styles from './workSpaseTextArea.module.scss';
-import { useParams } from 'react-router-dom';
+import { useLocation, useParams } from 'react-router-dom';
 import { NOTES } from '../../constants';
 import { useEffect, useState } from 'react';
 
 const WorkSpaseTextArea = () => {
 	const { noteId } = useParams();
+	const { pathname } = useLocation();
 
 	const [noteText, setNoteText] = useState('');
 	const [creationDate, setCreationDate] = useState(new Date().toLocaleString());
@@ -20,6 +21,12 @@ const WorkSpaseTextArea = () => {
 			}
 		}
 	}, [noteId]);
+
+	useEffect(() => {
+		if (pathname === '/add-note') {
+			setNoteText('');
+		}
+	}, [pathname]);
 
 	const inputChangeHandler = (e) => {
 		setNoteText(e.target.value);
