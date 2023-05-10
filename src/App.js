@@ -31,7 +31,7 @@ function App() {
 		} else {
 			setDBType('indexeddb');
 		}
-	}, []);
+	}, [setDBType]);
 
 	useEffect(() => {
 		const fetchData = async () => {
@@ -46,6 +46,11 @@ function App() {
 				getData = getQuintaDbData;
 				getData().then((data) => setData(data));
 				if (!data) {
+					const firstNote = {
+						note: 'My first Note!',
+						created: today,
+						id: 'note-1',
+					};
 					await createNote(firstNote);
 				}
 			} else {
@@ -59,7 +64,7 @@ function App() {
 			}
 		};
 		fetchData();
-	}, [setData]);
+	}, [setData, data]);
 
 	const saveData = saveIndexedDbData;
 
@@ -78,7 +83,7 @@ function App() {
 				navigate(`/${id}`);
 			}
 		},
-		[saveData, data, setData]
+		[saveData, data, setData, dbType, navigate]
 	);
 
 	const editNoteHandler = useCallback(
@@ -98,7 +103,7 @@ function App() {
 				setData(newData);
 			}
 		},
-		[data, saveData, setData]
+		[data, saveData, setData, dbType]
 	);
 
 	const deleteNoteHandler = useCallback(
@@ -119,7 +124,7 @@ function App() {
 				}
 			}
 		},
-		[data, saveData, navigate, setData]
+		[data, saveData, navigate, setData, dbType]
 	);
 	return (
 		<>
