@@ -4,9 +4,7 @@ Commands:
 "start" - The application runs on any platform using indexDB by default.
 
 For Windows:
-"start-windows-indexeddb"
-"start-windows-quintadb"
+"start-windows-indexeddb", "start-windows-quintadb"
 
-For Linux:
-"start-linux-indexeddb",
-"start-linux-quintadb"
+For Linux/ MacOS:
+"start-linux-indexeddb", "start-linux-quintadb"
