@@ -73,7 +73,7 @@ function App() {
 			if (dbType === 'indexeddb') {
 				if (data) {
 					const newData = [...data, note];
-					saveData('notes', newData);
+					await saveData('notes', newData);
 					setData(newData);
 				}
 			} else if (dbType === 'quintadb') {
@@ -93,7 +93,7 @@ function App() {
 				const newNote = { ...noteToEdit, note: value };
 				const restOfData = data.filter((el) => el.id !== id);
 				const newData = [...restOfData, newNote];
-				saveData('notes', newData);
+				await ('notes', newData);
 				setData(newData);
 			} else if (dbType === 'quintadb') {
 				let newNote;
@@ -103,7 +103,7 @@ function App() {
 				setData(newData);
 			}
 		},
-		[data, saveData, setData, dbType]
+		[data, setData, dbType]
 	);
 
 	const deleteNoteHandler = useCallback(
