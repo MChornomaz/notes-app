@@ -11,7 +11,9 @@ import {
 } from './databases/indexeddb';
 import {
 	getData as getQuintaDbData,
-	saveData as saveQuintaDbData,
+	createNote,
+	updateNote,
+	deleteNote,
 } from './databases/quintadb';
 import AppContext from './store/app-context';
 import { getCurrentDate } from './helpers/getCurrentDate';
@@ -19,62 +21,82 @@ import { getCurrentDate } from './helpers/getCurrentDate';
 import './App.scss';
 
 function App() {
-	const { data, setData } = useContext(AppContext);
+	const { data, setData, dbType, setDBType } = useContext(AppContext);
 	const navigate = useNavigate();
 	const textAreaRef = useRef(null);
+
+	useEffect(() => {
+		if (process.env.REACT_APP_DB) {
+			setDBType(process.env.REACT_APP_DB.toString());
+		} else {
+			setDBType('indexeddb');
+		}
+	}, []);
 
 	useEffect(() => {
 		const fetchData = async () => {
 			const dbName = process.env.REACT_APP_DB || 'indexeddb';
 			let getData, saveData;
+			const today = getCurrentDate();
+			const firstNote = {
+				note: 'My first Note!',
+				created: today,
+			};
 			if (dbName === 'quintadb') {
 				getData = getQuintaDbData;
-				saveData = saveQuintaDbData;
+				getData().then((data) => setData(data));
+				if (!data) {
+					await createNote(firstNote);
+				}
 			} else {
 				getData = getIndexedDbData;
 				saveData = saveIndexedDbData;
+				const data = await getData('notes');
+				if (!data) {
+					saveData('notes', [firstNote]);
+				}
+				setData(data);
 			}
-			const data = await getData('notes');
-			if (!data) {
-				const today = getCurrentDate();
-				const firstNote = [
-					{
-						id: '1',
-						note: 'My first Note!',
-						created: today,
-					},
-				];
-				saveData('notes', firstNote);
-			}
-			setData(data);
 		};
 		fetchData();
 	}, [setData]);
 
-	const saveData =
-		process.env.REACT_APP_DB === 'quintadb'
-			? saveQuintaDbData
-			: saveIndexedDbData;
+	const saveData = saveIndexedDbData;
 
 	const addNoteHandler = useCallback(
-		(note) => {
-			if (data) {
-				const newData = [...data, note];
-				saveData('notes', newData);
-				setData(newData);
+		async (note) => {
+			if (dbType === 'indexeddb') {
+				if (data) {
+					const newData = [...data, note];
+					saveData('notes', newData);
+					setData(newData);
+				}
+			} else if (dbType === 'quintadb') {
+				let id;
+				await createNote(note).then((data) => (id = data));
+				getQuintaDbData().then((data) => setData(data));
+				navigate(`/${id}`);
 			}
 		},
 		[saveData, data, setData]
 	);
 
 	const editNoteHandler = useCallback(
-		(id, value) => {
-			const noteToEdit = data.find((el) => el.id === id);
-			const newNote = { ...noteToEdit, note: value };
-			const restOfData = data.filter((el) => el.id !== id);
-			const newData = [...restOfData, newNote];
-			saveData('notes', newData);
-			setData(newData);
+		async (id, value) => {
+			if (dbType === 'indexeddb') {
+				const noteToEdit = data.find((el) => el.id === id);
+				const newNote = { ...noteToEdit, note: value };
+				const restOfData = data.filter((el) => el.id !== id);
+				const newData = [...restOfData, newNote];
+				saveData('notes', newData);
+				setData(newData);
+			} else if (dbType === 'quintadb') {
+				let newNote;
+				await updateNote(id, value).then((data) => (newNote = data));
+				const restOfData = data.filter((el) => el.id !== id);
+				const newData = [...restOfData, newNote];
+				setData(newData);
+			}
 		},
 		[data, saveData, setData]
 	);
@@ -82,19 +104,23 @@ function App() {
 	const deleteNoteHandler = useCallback(
 		(id) => {
 			if (data) {
-				const filteredNotes = data.filter((el) => el.id !== id);
-				try {
-					saveData('notes', filteredNotes);
-					setData(filteredNotes);
-					navigate('/');
-				} catch (e) {
-					console.log(e);
+				if (dbType === 'indexeddb') {
+					const filteredNotes = data.filter((el) => el.id !== id);
+					try {
+						saveData('notes', filteredNotes);
+						setData(filteredNotes);
+						navigate('/');
+					} catch (e) {
+						console.log(e);
+					}
+				} else if (dbType === 'quintadb') {
+					const filteredNotes = data.filter((el) => el.id !== id);
+					deleteNote(id).then(() => setData(filteredNotes));
 				}
 			}
 		},
 		[data, saveData, navigate, setData]
 	);
-
 	return (
 		<>
 			<Header deleteNote={deleteNoteHandler} inputRef={textAreaRef} />

@@ -7,6 +7,8 @@ import DeleteIcon from '../../static/icons/DeleteIcon';
 import CheckIcon from '../../static/icons/CheckIcon';
 import SearchBox from '../SearchBox/SearchBox';
 import AppContext from '../../store/app-context';
+import Modal from '../../UI/Modal/Modal';
+import ModalButton from '../../UI/buttons/ModalButton/ModalButton';
 
 import styles from './header.module.scss';
 
@@ -15,6 +17,7 @@ const Header = ({ deleteNote, inputRef }) => {
 	const noteId = location.pathname.slice(1);
 	const [blockButtons, setBlockButtons] = useState(true);
 	const [searchString, setSearchString] = useState('');
+	const [showModal, setShowModal] = useState(false);
 
 	const navigate = useNavigate();
 
@@ -22,8 +25,9 @@ const Header = ({ deleteNote, inputRef }) => {
 		useContext(AppContext);
 
 	const addNoteHandler = useCallback(() => {
+		setBurgerOpened(false);
 		navigate('/add-note');
-	}, [navigate]);
+	}, [navigate, burgerOpened]);
 
 	useEffect(() => {
 		if (noteId) {
@@ -40,8 +44,14 @@ const Header = ({ deleteNote, inputRef }) => {
 	const deleteNoteHandler = useCallback(
 		(id) => {
 			deleteNote(id);
+			setShowModal(false);
+
+			navigate('/');
+			if (mobileScreen) {
+				setBurgerOpened(true);
+			}
 		},
-		[noteId, deleteNote]
+		[deleteNote]
 	);
 
 	const searchChangeHandler = useCallback(
@@ -58,42 +68,62 @@ const Header = ({ deleteNote, inputRef }) => {
 		[data, navigate]
 	);
 
+	const modalShowHandler = useCallback(() => {
+		setShowModal(!showModal);
+	}, [showModal]);
+
 	return (
-		<header className={styles.header}>
-			<div className={styles.header__buttons}>
-				{mobileScreen && (
-					<HeaderButton
-						classname={`${styles.burger} ${burgerOpened && styles.opened}`}
-						onClick={burgerButtonClickHandler}
-					>
-						<span />
+		<>
+			{showModal && (
+				<Modal>
+					<div className={styles.modal}>
+						<h2 className={styles.modal__heading}>
+							Are you sure, you want to delete this note?
+						</h2>
+						<div className={styles.modal__buttons}>
+							<ModalButton onClick={() => deleteNoteHandler(noteId)}>
+								Yes
+							</ModalButton>
+							<ModalButton onClick={modalShowHandler} inverted={true}>
+								No
+							</ModalButton>
+						</div>
+					</div>
+				</Modal>
+			)}
+			<header className={styles.header}>
+				<div className={styles.header__buttons}>
+					{mobileScreen && (
+						<HeaderButton
+							classname={`${styles.burger} ${burgerOpened && styles.opened}`}
+							onClick={burgerButtonClickHandler}
+						>
+							<span />
+						</HeaderButton>
+					)}
+					<HeaderButton onClick={addNoteHandler}>
+						<AddIcon />
 					</HeaderButton>
-				)}
-				<HeaderButton onClick={addNoteHandler}>
-					<AddIcon />
-				</HeaderButton>
-				<HeaderButton
-					disabled={blockButtons}
-					onClick={() => deleteNoteHandler(noteId)}
-				>
-					<DeleteIcon />
-				</HeaderButton>
-				<HeaderButton
-					disabled={blockButtons}
-					onClick={() => inputRef.current.focus()}
-				>
-					<CheckIcon />
-				</HeaderButton>
-			</div>
-			<div className={styles.header__search}>
-				<SearchBox
-					id='search'
-					placeholder='Search'
-					value={searchString}
-					onChange={searchChangeHandler}
-				/>
-			</div>
-		</header>
+					<HeaderButton disabled={blockButtons} onClick={modalShowHandler}>
+						<DeleteIcon />
+					</HeaderButton>
+					<HeaderButton
+						disabled={blockButtons}
+						onClick={() => inputRef.current.focus()}
+					>
+						<CheckIcon />
+					</HeaderButton>
+				</div>
+				<div className={styles.header__search}>
+					<SearchBox
+						id='search'
+						placeholder='Search'
+						value={searchString}
+						onChange={searchChangeHandler}
+					/>
+				</div>
+			</header>
+		</>
 	);
 };
 

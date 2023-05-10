@@ -1,8 +1,10 @@
-import ListItem from '../ListItem/ListItem';
-import styles from './sidebar.module.scss';
 import { useLocation } from 'react-router-dom';
 import { useContext } from 'react';
+
 import AppContext from '../../store/app-context';
+import ListItem from '../ListItem/ListItem';
+
+import styles from './sidebar.module.scss';
 
 const Sidebar = () => {
 	const location = useLocation();

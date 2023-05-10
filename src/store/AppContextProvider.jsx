@@ -5,6 +5,7 @@ const AppContextProvider = (props) => {
 	const [mobileScreen, setMobileScreen] = useState(false);
 	const [burgerOpened, setBurgerOpened] = useState(true);
 	const [data, setData] = useState([]);
+	const [dbType, setDBType] = useState('');
 
 	useEffect(() => {
 		function handleResize() {
@@ -26,6 +27,8 @@ const AppContextProvider = (props) => {
 		data,
 		setData,
 		setBurgerOpened,
+		dbType,
+		setDBType,
 	};
 	return (
 		<AppContext.Provider value={appContext}>
